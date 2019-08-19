@@ -28,4 +28,18 @@ return function (App $app) {
         $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         return $pdo;
     };
+
+     // Database connection for FileMaker Database
+    $container['fmdb'] = function ($c) {
+        $settings = $c->get('settings')['fmdb'];
+
+        include __DIR__ .'/library/FileMakerCWP/FileMaker.php';
+
+        $fm = new FileMaker();
+        $fm->setProperty('database', $settings['dbname']);
+        $fm->setProperty('hostspec', $settings['host']);
+        $fm->setProperty('username', $settings['user']);
+        $fm->setProperty('password', $settings['pass']);
+        return $fm;
+    };
 };

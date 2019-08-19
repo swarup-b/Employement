@@ -26,5 +26,12 @@ return [
         "jwt" => [
             'secret' => 'supersecretkeymylogindemo'
         ],
+        // Database connection settings  for FileMaker database        
+          "fmdb" => [
+            "host" => "172.16.9.184",
+            "dbname" => "registration",
+            "user" => "admin",
+            "pass" => "mindfire"
+        ],
     ],
 ];
