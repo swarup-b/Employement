@@ -3,7 +3,7 @@ require_once __DIR__ . '/../constants/endpoints.php';
 
 class FmModel
 {
-
+//Create Records
     public function create($layout_name, $values, $fmdb)
     {
         $fmquery = $fmdb->newAddCommand($layout_name);
@@ -18,13 +18,36 @@ class FmModel
         }
     }
 
+//Update releated records
+    public function updateRecord($layoutName, $values, $fmdb, $recordID)
+    {
 
-    public function updateRecord($layout_name, $values, $fmdb){
+        $rec = $fmdb->getRecordById($layoutName, $recordID);
+        while (list($key, $val) = each($values)) {
+            $rec->setField($key, $val);
+            $result = $rec->commit();
+        }
 
+        if ($fmdb::isError($result)) {
+            return ["error" => "Some error occured"];
+        } else {
+            return ["data" => "Updated Successfully"];
+        }
     }
 
+//Delete Related Records
 
+    public function deleteRecord($layoutName, $fmdb, $recordID)
+    {
+        $rec = $fmdb->getRecordById($layoutName, $recordID);
+        $result=$rec->delete();
+        if (FileMaker::isError($result)) {
+            return ["error" => "Some error occured"];
+        }
+        return ["error" => "Successfully Deleted"];
+    }
 
+//Get all record and also get record on specified field
     public function findFmRecord($layout_name, $fieldName, $fmdb)
     {
         $count = count($fieldName); //Getting total no of field

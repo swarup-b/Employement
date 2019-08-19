@@ -42,4 +42,9 @@ return function (App $app) {
         $fm->setProperty('password', $settings['pass']);
         return $fm;
     };
+
+    $container['fmModel'] = function ($container) {
+        $fmModel = new FmModel();
+        return $fmModel;
+    };
 };

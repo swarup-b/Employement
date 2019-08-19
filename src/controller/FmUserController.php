@@ -74,23 +74,12 @@ class FmUserController
 
     }
 
-    public function deleteUser($request, $response, $args)
-    {
-        $layout_name = 'userinfo';
-        $rec = $this->fmdb->getRecordById('userinfo', $args['id']);
-        $rec->delete();
 
-        if (FileMaker::isError($result)) {
-            echo "Error: " . $result->getMessage() . "\n";
-            exit;
-        }
-        return $response->withJson($values);
-    }
 
     public function getInfo($request, $response)
     {
 
-        $layout_name = 'userinfo';
+        $layout_name = 'Contact';
         $findCommand = $this->fmdb->newFindAllCommand($layout_name);
 
         $result = $findCommand->execute();
