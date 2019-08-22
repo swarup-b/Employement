@@ -1,6 +1,6 @@
 <?php
 /**
- * User Profile Controller
+ * User Service
  *
  * User profile view and update
  * Created date : 17/08/2019
@@ -13,11 +13,22 @@
 namespace Src\Services;
 use \Firebase\JWT\JWT;
 use Src\Model\FmModel;
+
+/**
+ * Documents controller
+ *
+ * Contain two property($container,$settings) one constructor
+ * and two method(uploadDocument , viewDocument)
+ */
 class UserService{
 
 
 	public function createNewUser($layout_name,$values, $fmdb){
-
+		/**
+     * Used to contain db instance
+     *
+     * @var Object
+     */
 		    $user = new FmModel();
 			$fieldsName=array("email"=>$values->email );
 			$result = $user->findFmRecord($layout_name,$fieldsName, $fmdb);

@@ -1,8 +1,8 @@
 <?php
 /**
- * User Profile Controller
+ * functions for decodetoken and getrecordbyid
  *
- * User profile view and update
+ * 
  * Created date : 17/08/2019
  *
  * PHP version 7

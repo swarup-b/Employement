@@ -1,8 +1,8 @@
 <?php
 /**
- * User Profile Controller
+ * User Controller
  *
- * User profile view and update
+ * User Create and login
  * Created date : 17/08/2019
  *
  * PHP version 7
@@ -12,30 +12,74 @@
  */
 namespace Src\Controller;
 
-
 use Interop\Container\ContainerInterface;
 use Src\Services\UserService;
 use Src\Services\Validation;
 
 require_once __DIR__ . '/../constants/StatusCode.php';
 
+/**
+ * FmUser controller
+ *
+ * Contain two property($fmdb,$settings) one constructor
+ * and two method(uploadDocument , viewDocument)
+ */
 
 class FmUserController
-{
+{/**
+ * Used to contain db instance
+ *
+ * @var Object
+ */
     public $fmdb;
+    /**
+     * Used to contain settings instance
+     *
+     * @var Object
+     */
     public $settings;
-
+/**
+ *  Initialize the FileMaker instance and get the settings
+ *
+ * @param object $container contain information related to db
+ */
     public function __construct(ContainerInterface $container)
     {
         $this->fmdb = $container->get('fmdb');
         $this->settings = $container->get('settings');
     }
-
+    /**
+     * Update Create User
+     *
+     *
+     *
+     *
+     * @param object $request  represents the current HTTP request received
+     *                         by the web server
+     * @param object $response represents the current HTTP response to be
+     *                         returned to the client.
+     *
+     * @return object           return response object with JSON format
+     */
     public function createUser($request, $response)
     {
-
+        /**
+         * Used to contain RequestBody
+         *
+         * @var Object
+         */
         $values = json_decode($request->getBody());
+        /**
+         * Used to contain Validation instance
+         *
+         * @var Object
+         */
         $validator = new Validation();
+        /**
+         * Used to return Statement
+         *
+         * @var Boolean
+         */
         $validateEmail = $validator->validateEmail($values->email);
 
         // Checking if any of the fields are empty
@@ -51,21 +95,60 @@ class FmUserController
         }
         //Creating a new record
         else {
-
+            /**
+             * Used to contain Layout Name
+             *
+             * @var String
+             */
             $layout_name = 'userinfo';
+            /**
+             * Used to contain UserService instance
+             *
+             * @var Object
+             */
             $userService = new UserService();
+            /**
+             * Used to contain return ststement
+             *
+             * @var Object
+             */
             $result = $userService->createNewUser($layout_name, $values, $this->fmdb);
             return $response->withJson($result);
         }
 
     }
-
+    /**
+     * Login User
+     *
+     *
+     *
+     *
+     * @param object $request  represents the current HTTP request received
+     *                         by the web server
+     * @param object $response represents the current HTTP response to be
+     *                         returned to the client.
+     * @param array  $args     store the values send through url
+     *
+     * @return object           return response object with JSON format
+     */
     public function login($request, $response)
-    {
-        print_r($this->fmdb);
-       // echo getenv('HOST');
+    {/**
+     * Used to contain RequestBody
+     *
+     * @var Object
+     */
         $values = json_decode($request->getBody());
+        /**
+         * Used to contain Validation instance
+         *
+         * @var Object
+         */
         $validator = new Validation();
+        /**
+         * Used to contain Return Value
+         *
+         * @var Boolean
+         */
         $validateEmail = $validator->validateEmail($values->email);
 
         // Checking if any of the fields are empty
@@ -81,51 +164,27 @@ class FmUserController
         }
         //login the user
         else {
-
+            /**
+             * Used to contain Layout Name
+             *
+             * @var Object
+             */
             $layout_name = 'userinfo';
+            /**
+             * Used to contain UserService instance
+             *
+             * @var Object
+             */
             $userService = new UserService();
-            $result = $userService->loginUser($layout_name, $values, $this->fmdb,$this->settings);
+            /**
+             * Used to contain return statement
+             *
+             * @var Object
+             */
+            $result = $userService->loginUser($layout_name, $values, $this->fmdb, $this->settings);
             return $response->withJson($result);
         }
 
     }
 
-
-
-    public function getInfo($request, $response)
-    {
-
-        $layout_name = 'Contact';
-        $findCommand = $this->fmdb->newFindAllCommand($layout_name);
-
-        $result = $findCommand->execute();
-
-        if (FileMaker::isError($result)) {
-            echo "Error: " . $result->getMessage() . "\n";
-            exit;}
-
-        $records = $result->getRecords();
-
-        $layout_object = $this->fmdb->getLayout($layout_name);
-        $field_objects = $layout_object->getFields();
-        $arr2 = array();
-        $arr3 = array();
-        $arr4 = array();
-
-        foreach ($records as $record) {
-            $recid = $record->getRecordId();
-            foreach ($field_objects as $field_object) {
-                $record = $this->fmdb->getRecordById($layout_name, $recid);
-                $field_name = $field_object->getName();
-                $field_value = $record->getField($field_name);
-                $field_value = htmlspecialchars($field_value);
-                $field_value = nl2br($field_value);
-                $arr1 = array($field_name => $field_value);
-                $arr2 = array_merge($arr2, $arr1);
-                //echo  $field_name.': '.$field_value.'<br>';
-            }
-            $arr3 = array_merge($arr3, $arr2);
-            echo json_encode($arr3);
-        }
-    }
 }

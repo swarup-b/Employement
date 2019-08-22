@@ -1,8 +1,8 @@
 <?php
 /**
- * User Profile Controller
+ * Filemaker Model
  *
- * User profile view and update
+ * CURD operations
  * Created date : 17/08/2019
  *
  * PHP version 7
@@ -12,15 +12,45 @@
  */
 namespace Src\Model;
 
+/**
+ * FmUser Model
+ *
+ * Contain and two method
+ * (create , updateRecord ,deleteRecord,findFmRecord)
+ */
+
 class FmModel
 {
-//Create Records
+/**
+ * Create Record
+ *
+ *
+ *
+ *
+ * @param String $layout_name  Layout Name Received
+ *
+ * @param object $values represents the
+ *                         RequestBody
+ * @param object $fmdb Database instance
+ *
+ *
+ * @return Array           return array
+ */
     public function create($layout_name, $values, $fmdb)
-    {
+    {/**
+     * Used to contain new record object
+     *
+     * @var Object
+     */
         $fmquery = $fmdb->newAddCommand($layout_name);
         while (list($key, $val) = each($values)) {
             $fmquery->setField($key, $val);
         }
+        /**
+         * Used to contain result of executed query
+         *
+         * @var Object
+         */
         $result = $fmquery->execute();
         if ($fmdb::isError($result)) {
             return ["error" => "Some error occured"];
@@ -29,10 +59,28 @@ class FmModel
         }
     }
 
-//Update releated records
+/**
+ * Update Contact Details
+ *
+ *
+ *
+ *
+ * @param String $layout_name  Layout Name Received
+ *
+ * @param object $values represents the
+ *                         RequestBody
+ * @param object $fmdb Database instance
+ * @param Integer $recordID record Id
+ *
+ * @return Array           return array
+ */
     public function updateRecord($layoutName, $values, $fmdb, $recordID)
     {
-
+        /**
+         * Used to contain  RecordObject
+         *
+         * @var Object
+         */
         $rec = $fmdb->getRecordById($layoutName, $recordID);
         while (list($key, $val) = each($values)) {
             $rec->setField($key, $val);
@@ -46,18 +94,48 @@ class FmModel
         }
     }
 
-//Delete Related Records
+/**
+ * Delete Records
+ *
+ *
+ *
+ *
+ * @param String $layout_name  Layout Name Received
+ *
+ *
+ *@param object $fmdb Database instance
+ * @param Integer $recordID record Id
+ * @return Array           return array
+ */
 
     public function deleteRecord($layoutName, $fmdb, $recordID)
     {
         $rec = $fmdb->getRecordById($layoutName, $recordID);
-        $result=$rec->delete();
+        $result = $rec->delete();
         return ["error" => "Successfully Deleted"];
     }
 
-//Get all record and also get record on specified field
+/**
+ * Update Contact Details
+ *
+ *
+ *
+ *
+ * @param String $layout_name  Layout Name Received
+ *
+ * @param object $values represents the
+ *                         RequestBody
+ * @param object $fmdb Database instance
+ *
+ * @return Array           return array
+ */
     public function findFmRecord($layout_name, $fieldName, $fmdb)
     {
+        /**
+         * Used to contain Field Name Present
+         *
+         * @var Integer
+         */
         $count = count($fieldName); //Getting total no of field
         $fmquery = $fmdb->newFindCommand($layout_name);
 
@@ -79,7 +157,11 @@ class FmModel
             return "NOT_FOUND";
 
         }
-
+        /**
+         * Used to contain Record
+         *
+         * @var Object
+         */
         $recs = $result->getRecords();
 
         $count = 0;

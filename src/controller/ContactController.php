@@ -1,8 +1,8 @@
 <?php
 /**
- * User Profile Controller
+ * Contact Controller
  *
- * User profile view and update
+ * contact create , update , delte ,view
  * Created date : 17/08/2019
  *
  * PHP version 7
@@ -12,45 +12,98 @@
  */
 namespace Src\Controller;
 
-
-
 use Interop\Container\ContainerInterface;
-use Src\Services\ContactService;
-use Src\Services\Validation;
 use Src\Model\FmModel;
+use Src\Services\ContactService;
 
 require_once __DIR__ . '/../services/DecodeToken.php';
 require_once __DIR__ . '/../constants/StatusCode.php';
 
+/**
+ * Contact controller
+ *
+ * Contain two property($fmdb,$settings) one constructor
+ * and two method(uploadDocument , viewDocument)
+ */
 
 class ContactController
 {
-
+    /**
+     * Used to contain db instance
+     *
+     * @var Object
+     */
     public $fmdb;
+    /**
+     * Used to contain settings instance
+     *
+     * @var Object
+     */
     public $settings;
-
+    /**
+     *  Initialize the FileMaker instance and get the settings
+     *
+     * @param object $container contain information related to db
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->fmdb = $container->get('fmdb');
         $this->settings = $container->get('settings');
     }
-//Crreating new Contacts
+    /**
+     * Creating Create Contact
+     *
+     *
+     *
+     *
+     * @param object $request  represents the current HTTP request received
+     *                         by the web server
+     * @param object $response represents the current HTTP response to be
+     *                         returned to the client.
+     * @return return response object with JSON format
+     */
     public function createContact($request, $response)
     {
-        //$tkn=$request->get_headers('Authorization');
-
+        /* Used to contain  id
+         *
+         * @var Integer
+         */
         $id = decodeToken();
-
+        /*
+         * Condition for Id
+         */
         if ($id) {
+            /**
+             * Used to contain Request Body
+             *
+             * @var Object
+             */
             $contactDetails = json_decode($request->getBody());
+            /**
+             * Used to contain layout name
+             *
+             * @var String
+             */
             $layoutName = 'myContact';
-            // Checking if any of the fields are empty
+            /*
+             * Condition For empty  field
+             */
             if (empty($contactDetails->fullname) || empty($contactDetails->email) || empty($contactDetails->title) || empty($contactDetails->phone) || empty($contactDetails->dob)) {
                 return $response->withJSON(['error' => true, 'message' => 'Enter the required field.'],
                     NOT_ACCEPTABLE);
 
             } else {
+                /**
+                 * Used to contain Container class Instance
+                 *
+                 * @var Object
+                 */
                 $contactService = new ContactService();
+                /**
+                 * Used to contain return of called function
+                 *
+                 * @var Object
+                 */
                 $result = $contactService->saveContactDetails($layoutName, $contactDetails, $this->fmdb);
                 return $response->withJSON($result);
             }
@@ -60,11 +113,31 @@ class ContactController
         }
     }
 
-    //Getting all Contacts
+    /**
+     * Getting all Contact
+     *
+     *
+     *
+     *
+     * @param object $request  represents the current HTTP request received
+     *                         by the web server
+     * @param object $response represents the current HTTP response to be
+     *                         returned to the client.
+     * @return   return response object with JSON format
+     */
     public function getAllContacts($request, $response)
     {
-
+        /**
+         * Used to contain Container id
+         *
+         * @var Integer
+         */
         $id = decodeToken();
+        /**
+         * Used to contain Layout Name
+         *
+         * @var String
+         */
         $layoutName = "allContact";
 
         if ($id) {
@@ -81,12 +154,38 @@ class ContactController
 
     }
 
-    //Deleting contact according to id
+    /**
+     * Ddelete Contacts
+     *
+     *
+     *
+     *
+     * @param object $request  represents the current HTTP request received
+     *                         by the web server
+     * @param object $response represents the current HTTP response to be
+     *                         returned to the client.
+     * @param array  $args     store the values send through url
+     *
+     * @return object           return response object with JSON format
+     */
 
     public function deleteContact($request, $response, $args)
     {
+        /*
+         * Used to Store Layout Name
+         * @var String
+
+         */
         $layoutName = "allContact";
+        /*
+         * Used to Store Id of User
+         * @var String
+
+         */
         $id = decodeToken();
+        /*
+         *Condition for Id Present or not
+         */
         if (!$id) {
             return $response->withJSON(['error' => true, 'message' => 'Unauthorized Access.'],
                 UNAUTHORIZED_USER);
@@ -95,58 +194,139 @@ class ContactController
             return $response->withJSON(['error' => true, 'message' => 'Please provide an id.'],
                 API_PARAM_REQUIRED);
         } else {
+            /**
+             * Used to contain FmModel class Instance
+             *
+             * @var Object
+             */
             $contact = new FmModel();
+            /**
+             * Used to contain Method return object
+             *
+             * @var Object
+             */
             $result = $contact->deleteRecord($layoutName, $this->fmdb, $args['id']);
-           // $contact->deleteRecord($layoutName, $this->fmdb, $args['id']);
             return $response->withJson($result);
         }
     }
 
-    //get  contact according to id
-    public function getContactsById($request, $response ,$args)
+    /**
+     * Get Contact Base upon Id
+     *
+     *
+     *
+     *
+     * @param object $request  represents the current HTTP request received
+     *                         by the web server
+     * @param object $response represents the current HTTP response to be
+     *                         returned to the client.
+     * @param array  $args     store the values send through url
+     *
+     * @return object           return response object with JSON format
+     */
+    public function getContactsById($request, $response, $args)
     {
-
+        /**
+         * Used to contain Docode Id
+         *
+         * @var Integer
+         */
         $id = decodeToken();
+        /**
+         * Used to contain Layout Name
+         *
+         * @var String
+         */
         $layoutName = "allContact";
-
+        /*
+         *Condition for Id empty or not
+         */
         if (!$id) {
             return $response->withJSON(['error' => true, 'message' => 'Unauthorized Access.'],
-            UNAUTHORIZED_USER);
-           
-        } else if(empty($args['id'])){
+                UNAUTHORIZED_USER);
+
+        } else if (empty($args['id'])) {
             return $response->withJSON(['error' => true, 'message' => 'Please provide an id.'],
-            API_PARAM_REQUIRED);
-        }else {
+                API_PARAM_REQUIRED);
+        } else {
             $requestValue = array(
                 'contactID' => $args['id'],
             );
+            /**
+             * Used to contain FmModel Class Instace
+             *
+             * @var Object
+             */
             $contact = new FmModel();
+            /**
+             * Used to contain Return value
+             *
+             * @var Object
+             */
             $result = $contact->findFmRecord($layoutName, $requestValue, $this->fmdb);
             return $response->withJson($result);
         }
 
     }
 
-    //update contatcts
-
-    public function updateContact($request, $response ,$args){
+    /**
+     * Update Contact Details
+     *
+     *
+     *
+     *
+     * @param object $request  represents the current HTTP request received
+     *                         by the web server
+     * @param object $response represents the current HTTP response to be
+     *                         returned to the client.
+     * @param array  $args     store the values send through url
+     *
+     * @return object           return response object with JSON format
+     */
+    public function updateContact($request, $response, $args)
+    {/**
+     * Used to contain Decode Id
+     *
+     * @var Integer
+     */
         $id = decodeToken();
+        /**
+         * Used to contain Layout Name
+         *
+         * @var String
+         */
         $layoutName = "allContact";
-
+        /*
+         *Condition for Id empty or not
+         */
         if (!$id) {
             return $response->withJSON(['error' => true, 'message' => 'Unauthorized Access.'],
-            UNAUTHORIZED_USER);
-           
-        } else if(empty($args['id'])){
+                UNAUTHORIZED_USER);
+
+        } else if (empty($args['id'])) {
             return $response->withJSON(['error' => true, 'message' => 'Please provide an id.'],
-            API_PARAM_REQUIRED);
-        }else {
+                API_PARAM_REQUIRED);
+        } else {
+            /**
+             * Used to contain Request Body
+             *
+             * @var Object
+             */
             $requestValue = json_decode($request->getBody());
+            /**
+             * Used to contain FmModel Instance
+             *
+             * @var Object
+             */
             $contact = new FmModel();
-            $result = $contact->updateRecord($layoutName, $requestValue, $this->fmdb,$args['id']);
+            /**
+             * Used to contain Return functionn
+             *
+             * @var Object
+             */
+            $result = $contact->updateRecord($layoutName, $requestValue, $this->fmdb, $args['id']);
             return $response->withJson($result);
         }
-
 
     }
 }
