@@ -1,4 +1,19 @@
 <?php
+/**
+ * User Profile Controller
+ *
+ * User profile view and update
+ * Created date : 17/08/2019
+ *
+ * PHP version 7
+ *
+ * @author  Original Author <swarupb@mindfiresolutions.com>
+ * @version <GIT: https://github.com/swarup-b/Employement>
+ */
+
+namespace App\api\models;
+
+
 class CURDUser{
 	public function createEmployee($adminDetails,$db){
 	        $createAdmin = "INSERT INTO employees (name, address, salary,admin_id) VALUES (:name,:address,:salary,:admin_id)";

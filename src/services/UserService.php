@@ -1,6 +1,18 @@
 <?php
+/**
+ * User Profile Controller
+ *
+ * User profile view and update
+ * Created date : 17/08/2019
+ *
+ * PHP version 7
+ *
+ * @author  Original Author <swarupb@mindfiresolutions.com>
+ * @version <GIT: https://github.com/swarup-b/Employement>
+ */
+namespace Src\Services;
 use \Firebase\JWT\JWT;
-require_once __DIR__ .'/../model/FmUserModel.php';
+use Src\Model\FmModel;
 class UserService{
 
 
@@ -31,6 +43,6 @@ class UserService{
 			}
 			$recordId = array_column($result, 'recordId');
 			$token = JWT::encode(['id' => $recordId[0]], $settings['jwt']['secret'], "HS256");
-			return $token;
+			return array("token"=>$token);
 	}
 }

@@ -10,9 +10,9 @@
  * @author  Original Author <swarupb@mindfiresolutions.com>
  * @version <GIT: https://github.com/swarup-b/Employement>
  */
-namespace Src\Services;
-use Src\Model\FmModel;
+namespace App\api\services;
 
+require_once __DIR__ .'/../model/FmUserModel.php';
 
 class  ContactService{
 

@@ -10,21 +10,20 @@
  * @author  Original Author <swarupb@mindfiresolutions.com>
  * @version <GIT: https://github.com/swarup-b/Employement>
  */
-namespace Src\Services;
+namespace App\api\services;
 
-use Src\Model\FmModel;
+require_once __DIR__ . '/../model/FmUserModel.php';
 require_once __DIR__ . '/../services/DecodeToken.php';
-
 class ActivityService
 {
-    public function createActivity($activity, $layoutName, $contactID, $fmdb)
+    public function createActivity($activity, $layoutName, $contactID, $fmdb, $fmModel)
     {
         $requestValue = array(
             'contactID' => $contactID,
             'date' => $activity->date,
             'activities' => $activity->activities,
         );
-         $fmModel = new FmModel();
+
         return $result = $fmModel->create($layoutName, $requestValue, $fmdb);
     }
 

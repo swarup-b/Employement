@@ -42,9 +42,27 @@ return function (App $app) {
         $fm->setProperty('password', $settings['pass']);
         return $fm;
     };
-
-    $container['fmModel'] = function ($container) {
-        $fmModel = new FmModel();
-        return $fmModel;
+   
+    $container['ContactController']=function ($c) {
+       return new Src\Controller\ContactController($c);
     };
+    $container['FmModel']=function ($c) {
+       return new Src\Model\FmModel($c);
+    };
+
+    $container['ActivityController']=function ($c) {
+       return new Src\Controller\ActivityController($c);
+    };
+
+    $container['FmUserController']=function ($c) {
+       return new Src\Controller\FmUserController($c);
+    };
+
+    $container['UserService']=function ($c) {
+       return new Src\Services\UserService($c);
+    };
+    $container['Validation']=function ($c) {
+       return new Src\Services\Validation($c);
+    };
+
 };

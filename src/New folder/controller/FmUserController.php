@@ -1,8 +1,8 @@
 <?php
 /**
- * User Profile Controller
+ * FmUserController
  *
- * User profile view and update
+ * User  login and create
  * Created date : 17/08/2019
  *
  * PHP version 7
@@ -10,15 +10,13 @@
  * @author  Original Author <swarupb@mindfiresolutions.com>
  * @version <GIT: https://github.com/swarup-b/Employement>
  */
-namespace Src\Controller;
+namespace App\api\controller;
 
 
+require_once __DIR__ . '/../services/FmUserService.php';
+require_once __DIR__ . '/../services/Validation.php';
+require_once __DIR__ . '/../../constants/StatusCode.php';
 use Interop\Container\ContainerInterface;
-use Src\Services\UserService;
-use Src\Services\Validation;
-
-require_once __DIR__ . '/../constants/StatusCode.php';
-
 
 class FmUserController
 {
@@ -62,8 +60,7 @@ class FmUserController
 
     public function login($request, $response)
     {
-        print_r($this->fmdb);
-       // echo getenv('HOST');
+
         $values = json_decode($request->getBody());
         $validator = new Validation();
         $validateEmail = $validator->validateEmail($values->email);

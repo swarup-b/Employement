@@ -10,18 +10,15 @@
  * @author  Original Author <swarupb@mindfiresolutions.com>
  * @version <GIT: https://github.com/swarup-b/Employement>
  */
-namespace Src\Controller;
+namespace Src\Api\Controller;
 
 
-
-use Interop\Container\ContainerInterface;
-use Src\Services\ContactService;
-use Src\Services\Validation;
-use Src\Model\FmModel;
-
+require_once __DIR__ . '/../services/ContactService.php';
+require_once __DIR__ . '/../services/Validation.php';
 require_once __DIR__ . '/../services/DecodeToken.php';
-require_once __DIR__ . '/../constants/StatusCode.php';
-
+require_once __DIR__ . '/../../constants/StatusCode.php';
+require_once __DIR__ . '/../model/FmUserModel.php';
+use Interop\Container\ContainerInterface;
 
 class ContactController
 {

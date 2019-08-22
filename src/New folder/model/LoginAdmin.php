@@ -1,4 +1,16 @@
  <?php
+ //namespace App\api\models;
+ /**
+ * User Profile Controller
+ *
+ * User profile view and update
+ * Created date : 17/08/2019
+ *
+ * PHP version 7
+ *
+ * @author  Original Author <swarupb@mindfiresolutions.com>
+ * @version <GIT: https://github.com/swarup-b/Employement>
+ */
 
 
 /**
@@ -6,9 +18,6 @@
  */
 class LoginAdmin 
 {
-	
-
-
 	public function createAdmin($adminDetails,$db){
          $sth = $db->prepare("SELECT * FROM admin WHERE email = :email");
          $sth->bindParam("email",$adminDetails->email);

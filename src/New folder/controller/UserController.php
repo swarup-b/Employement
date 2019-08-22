@@ -1,7 +1,20 @@
-<?php 
-include($_SERVER['DOCUMENT_ROOT'].'/EmployeeRegistration/src/model/CURDOperation.php');
+<?php
+/**
+ * UserController
+ *
+ * User profile view and update
+ * Created date : 17/08/2019
+ *
+ * PHP version 7
+ *
+ * @author  Original Author <swarupb@mindfiresolutions.com>
+ * @version <GIT: https://github.com/swarup-b/Employement>
+ */ 
+namespace App\api\controllers;
 
-require_once __DIR__ . '/../constants/endpoints.php';
+include($_SERVER['DOCUMENT_ROOT'].'/EmployeeRegistration/src/api/model/CURDOperation.php');
+
+require_once __DIR__ . '/../../constants/endpoints.php';
 use \Firebase\JWT\JWT;
 use Interop\Container\ContainerInterface;
 

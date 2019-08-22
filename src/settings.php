@@ -28,10 +28,10 @@ return [
         ],
         // Database connection settings  for FileMaker database        
           "fmdb" => [
-            "host" => "172.16.9.184",
-            "dbname" => "registration",
-            "user" => "admin",
-            "pass" => "mindfire"
+            "host" => getenv('HOST'),
+            "dbname" => getenv('DBNAME'),
+            "user" => getenv('USER'),
+            "pass" => getenv('PASSWORD')
         ],
     ],
 ];

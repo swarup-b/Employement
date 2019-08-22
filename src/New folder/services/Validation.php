@@ -1,7 +1,19 @@
 <?php
-namespace Src\Services;
+    /**
+ * User Profile Controller
+ *
+ * User profile view and update
+ * Created date : 17/08/2019
+ *
+ * PHP version 7
+ *
+ * @author  Original Author <swarupb@mindfiresolutions.com>
+ * @version <GIT: https://github.com/swarup-b/Employement>
+ */
+namespace App\api\services;
 
 class Validation{
+
 
 	 public function validateEmail(string $email){
 

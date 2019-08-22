@@ -9,27 +9,26 @@
  *
  * @author  Original Author <swarupb@mindfiresolutions.com>
  * @version <GIT: https://github.com/swarup-b/Employement>
-
  */
-namespace Src\Controller;
-
+namespace App\api\controllers;
+require_once __DIR__ . '/../services/ActivityService.php';
+require_once __DIR__ . '/../../constants/StatusCode.php';
+require_once __DIR__ . '/../model/FmUserModel.php';
 use Interop\Container\ContainerInterface;
-use Src\Services\ActivityService;
-use Src\Model\FmModel;
-require_once __DIR__ . '/../constants/StatusCode.php';
-
 
 class ActivityController
 {
 
     public $fmdb;
     public $settings;
+    public $fmModel;
     public $layoutName;
 
     public function __construct(ContainerInterface $container)
     {
         $this->fmdb = $container->get('fmdb');
         $this->settings = $container->get('settings');
+        $this->fmModel = $container->get('fmModel');
         $this->layoutName = "activity";
     }
 //Create new Activity
@@ -42,7 +41,7 @@ class ActivityController
                 NOT_ACCEPTABLE);
         } else {
             $activityService = new ActivityService();
-            $result = $activityService->createActivity($activity, $this->layoutName, $contactID, $this->fmdb);
+            $result = $activityService->createActivity($activity, $this->layoutName, $contactID, $this->fmdb, $this->fmModel);
             return $response->withJson($result);
         }
 
@@ -60,6 +59,8 @@ class ActivityController
             $result = $activityService ->  update($this->layoutName, $activityValue, $this->fmdb, $id);
             return $response->withJson($result);
         }
+
+
 
     }
 
@@ -86,7 +87,7 @@ class ActivityController
             return $response->withJSON(['error' => true, 'message' => 'Enter the required field.'],
                 NOT_ACCEPTABLE);
         } else {
-            $fmModel = new FmModel();
+            $fmModel = new FmModel($request, $response, $args);
             $fieldName=array('contactID' => $id); 
             $result= $fmModel -> findFmRecord($this->layoutName, $fieldName, $this->fmdb);
             return $response->withJson($result);

@@ -10,6 +10,8 @@
  * @author  Original Author <swarupb@mindfiresolutions.com>
  * @version <GIT: https://github.com/swarup-b/Employement>
  */
+namespace App\api\services;
+
 use \Firebase\JWT\JWT;
 
 function decodeToken()
@@ -34,6 +36,7 @@ function getRecordId($layoutName, $fmdb, $id)
         foreach ($recs as $rec) {
             $recordID = $rec->getRecordID();
         }
+
         return $recordID;
     } catch (Exception $e) {
         echo "";
