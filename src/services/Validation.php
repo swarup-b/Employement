@@ -1,17 +1,42 @@
 <?php
 namespace Src\Services;
 
-class Validation{
-
-	 public function validateEmail(string $email){
+/**
+ * Validation
+ *
+ *
+ * and two method(validateEmail , validatePassword)
+ */
+class Validation
+{
+    /**
+     * validateEmail
+     *
+     *
+     * @param String $email represent the email
+     *
+     *
+     * @return Boolean           return boolean value
+     */
+    public function validateEmail(string $email)
+    {
 
         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return true;
         }
         return false;
     }
-
-        public function validatePassword(string $password) {
+/**
+ * validateEmail
+ *
+ *
+ * @param String $password represent the password
+ *
+ *
+ * @return Boolean           return boolean value
+ */
+    public function validatePassword(string $password)
+    {
 
         if (preg_match('/^(?=.*\d)(?=.*[A-Za-z])(?=.*[!@#$%])[0-9A-Za-z!@#$%]{8,}$/', $password)) {
             return true;
@@ -19,9 +44,4 @@ class Validation{
         return false;
     }
 
-    
 }
-
-
-
-  ?>

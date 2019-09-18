@@ -100,7 +100,7 @@ class FmUserController
              *
              * @var String
              */
-            $layout_name = 'userinfo';
+            $layout_name = 'Employee';
             /**
              * Used to contain UserService instance
              *
@@ -169,7 +169,7 @@ class FmUserController
              *
              * @var Object
              */
-            $layout_name = 'userinfo';
+            $layout_name = 'Employee';
             /**
              * Used to contain UserService instance
              *

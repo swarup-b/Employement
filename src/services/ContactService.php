@@ -11,13 +11,39 @@
  * @version <GIT: https://github.com/swarup-b/Employement>
  */
 namespace Src\Services;
+
 use Src\Model\FmModel;
 
-
-class  ContactService{
-
-    public function saveContactDetails($layoutName , $contactDetails , $fmdb){
-        $contact=new FmModel();
-        return $result = $contact->create($layoutName , $contactDetails , $fmdb);
+/**
+ * Contact Service
+ *
+ *
+ * and one method(saveContactDetails)
+ */
+class ContactService
+{
+/**
+ * Cretae new Activity
+ *
+ *
+ *
+ *
+ * @param String $layoutName represents the clayout name
+ *
+ * @param Object $contactDetails represent the Request value to be updated
+ *
+ *  @param object $fmdb represent the db instance
+ *
+ * @return Array           return response array
+ */
+    public function saveContactDetails($layoutName, $contactDetails, $fmdb)
+    {
+        /**
+         * Used to contain FmModel Instance
+         *
+         * @var Object
+         */
+        $contact = new FmModel();
+        return $result = $contact->create($layoutName, $contactDetails, $fmdb);
     }
 }

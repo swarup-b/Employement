@@ -3,31 +3,43 @@ use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-$app->group('', 
+
+
+
+$app->group('/user/v1', function () use ($app) {
+//API For CRUD Operations Of Contacts
+$app->group('/contacts', 
 	function (Slim\App $group) {
-	 $group->get('/contacts', 'ContactController:getAllContacts');
-	 $group->post("/contacts", 'ContactController:createContact');
-	 $group->delete("/contacts/{id}", 'ContactController:deleteContact');
-	 $group->put("/contacts/{id}", 'ContactController:updateContact');
-	 $group->get("/contacts/{id}", 'ContactController:getContactsById');
+	 $group->get("/allRecords", 'ContactController:getRecordOnRange');
+	 $group->get('', 'ContactController:getAllContacts');
+	 $group->post("", 'ContactController:createContact');
+	 $group->delete("/{id}", 'ContactController:deleteContact');
+	 $group->put("/{id}", 'ContactController:updateContact');
+	 $group->get("/{id}", 'ContactController:getContactsById');
+
+	 
+}
+);
+//Api for CRUD Operation of Activities
+$app->group('/activities', 
+	function (Slim\App $group) {
+	 $group->post('/{contactID}', 'ActivityController:create');
+	 $group->put("/{id}", 'ActivityController:updateActivity');
+	 $group->delete("/{id}", 'ActivityController:deleteActivity');
+	 $group->get("/{contactID}", 'ActivityController:getAllActivity');
+}
+);
+//API For Create and login User
+$app->group('/users', 
+	function (Slim\App $group) {
+	 $group->post('', 'FmUserController:createUser');
+	 $group->post("/login", 'FmUserController:login');
 }
 );
 
-$app->group('', 
-	function (Slim\App $group) {
-	 $group->post('/activities/{contactID}', 'ActivityController:create');
-	 $group->put("/activities/{id}", 'ActivityController:updateActivity');
-	 $group->delete("/activities/{id}", 'ActivityController:deleteActivity');
-	 $group->get("/activities/{contactID}", 'ActivityController:getAllActivity');
-}
-);
+ // $app->get("/report", 'ContactController:getRecordOnRange');
 
-$app->group('', 
-	function (Slim\App $group) {
-	 $group->post('/users', 'FmUserController:createUser');
-	 $group->post("/users/login", 'FmUserController:login');
-}
-);
+});
 
 
 

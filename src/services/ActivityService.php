@@ -19,29 +19,32 @@ require_once __DIR__ . '/../services/DecodeToken.php';
 /**
  * Activity Service
  *
- * 
- * and two method(uploadDocument , viewDocument)
+ *
+ * and three method(create ,delete update)
  */
 class ActivityService
 {
     /**
-     * Update Create User
+     * Cretae new Activity
      *
      *
      *
      *
-     * @param object $request  represents the current HTTP request received
+     * @param object $activity  represents the requestbody
      *                         by the web server
-     * @param object $response represents the current HTTP response to be
-     *                         returned to the client.
+     * @param String $layoutName represents the clayout name
      *
-     * @return object           return response object with JSON format
+     * @param integer $contactID represent the id
+     *
+     *  @param object $fmdb represent the db instance
+     *
+     * @return Array           return response array
      */
     public function createActivity($activity, $layoutName, $contactID, $fmdb)
     {/**
-     * Used to contain db instance
+     * Used to contain requestValue
      *
-     * @var Object
+     * @var Array
      */
         $requestValue = array(
             'contactID' => $contactID,
@@ -49,7 +52,7 @@ class ActivityService
             'activities' => $activity->activities,
         );
         /**
-         * Used to contain db instance
+         * Used to contain FmModel instance
          *
          * @var Object
          */
@@ -57,24 +60,24 @@ class ActivityService
         return $result = $fmModel->create($layoutName, $requestValue, $fmdb);
     }
     /**
-     * Update Create User
+     * Delete Activity
      *
      *
      *
      *
-     * @param object $request  represents the current HTTP request received
-     *                         by the web server
-     * @param object $response represents the current HTTP response to be
-     *                         returned to the client.
+     * @param String $layoutName represent the current layout name
      *
-     * @return object           return response object with JSON format
+     * @param object $fmdb represents db instance
+     *
+     * @param Object $id represent the requested record to delete
+     * @return Array           return response Array
      */
     public function deleteAct($layoutName, $fmdb, $id)
     {
         /**
          * Used to contain db instance
          *
-         * @var Object
+         * @var Integer
          */
         $recordID = getRecordId($layoutName, $fmdb, $id);
         if ($recordID) {
@@ -84,24 +87,27 @@ class ActivityService
         return array("error" => "Record not found");
     }
     /**
-     * Update Create User
+     * Update Activity
      *
      *
      *
      *
-     * @param object $request  represents the current HTTP request received
+     * @param object $activityValue  represents the requestbody
      *                         by the web server
-     * @param object $response represents the current HTTP response to be
-     *                         returned to the client.
+     * @param String $layoutName represents the clayout name
      *
-     * @return object           return response object with JSON format
+     * @param integer $id represent the record to be update
+     *
+     *  @param object $fmdb represent the db instance
+     *
+     * @return Array           return response array
      */
     public function update($layoutName, $activityValue, $fmdb, $id)
     {
         /**
-         * Used to contain db instance
+         * Used to contain record Id
          *
-         * @var Object
+         * @var Integer
          */
         $recordID = getRecordId($layoutName, $fmdb, $id);
         if ($recordID) {

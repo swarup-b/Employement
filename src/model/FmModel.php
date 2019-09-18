@@ -112,7 +112,7 @@ class FmModel
     {
         $rec = $fmdb->getRecordById($layoutName, $recordID);
         $result = $rec->delete();
-        return ["error" => "Successfully Deleted"];
+        return ["message" => "Successfully Deleted"];
     }
 
 /**
@@ -138,7 +138,6 @@ class FmModel
          */
         $count = count($fieldName); //Getting total no of field
         $fmquery = $fmdb->newFindCommand($layout_name);
-
         if ($count === 1) {
             $field = each($fieldName);
             $fmquery->addFindCriterion($field['key'], '==' . $field['value']);
@@ -149,12 +148,14 @@ class FmModel
             foreach ($fieldName as $key => $value) {
                 $fmquery->addFindCriterion($key, '==' . $value);
             }
+
         }
 
         $result = $fmquery->execute();
+        
         //Return if record not present there
         if ($fmdb::isError($result)) {
-            return "NOT_FOUND";
+            return ["message" => "Record NotFound"];;
 
         }
         /**
@@ -169,7 +170,13 @@ class FmModel
             $field = $rec->getFields();
             $res['recordId'] = $rec->getRecordID();
             foreach ($field as $field_name) {
+                if($field_name == 'dob'){
+                    $date =  $rec->getField($field_name);
+                    $newDate = date("Y-m-d", strtotime($date));
+                    $res[$field_name] = $newDate;
+                }else{
                 $res[$field_name] = $rec->getField($field_name);
+                }
             }
             $response[$count] = $res;
             $count++;

@@ -23,7 +23,7 @@ require_once __DIR__ . '/../constants/StatusCode.php';
  * Contact controller
  *
  * Contain two property($fmdb,$settings) one constructor
- * and two method(uploadDocument , viewDocument)
+ * and five method(createContact , getAllContact ,updateContact,getContactById,deleteContact)
  */
 
 class ContactController
@@ -79,12 +79,15 @@ class ContactController
              * @var Object
              */
             $contactDetails = json_decode($request->getBody());
+            $originalDate = $contactDetails->dob;
+            $newDate = date("m-d-Y", strtotime($originalDate));
+            $contactDetails->dob = $newDate;
             /**
              * Used to contain layout name
              *
              * @var String
              */
-            $layoutName = 'myContact';
+            $layoutName = 'allContact';
             /*
              * Condition For empty  field
              */
@@ -139,7 +142,6 @@ class ContactController
          * @var String
          */
         $layoutName = "allContact";
-
         if ($id) {
             $requestValue = array(
                 'email' => "*",
@@ -265,8 +267,24 @@ class ContactController
              */
             $result = $contact->findFmRecord($layoutName, $requestValue, $this->fmdb);
             return $response->withJson($result);
-        }
+            // $find = $this->fmdb->newFindAnyCommand($layoutName);
+            // $find->addFindCriterion('contactID', '*');
+            // $per_page = 5;
+            // $start = 1;
+            // $find->setRange($start, $per_page);
 
+            // $result = $find->execute();
+
+            // $record_count = $result->getFoundSetCount();
+
+            // if ($this->fmdb::isError($result)) {
+            //     echo $result->intl_get_error_message();
+            // }
+
+            // $records = $result->getRecords();
+            // return $response->withJson($result);
+
+        }
     }
 
     /**
@@ -284,18 +302,19 @@ class ContactController
      * @return object           return response object with JSON format
      */
     public function updateContact($request, $response, $args)
-    {/**
-     * Used to contain Decode Id
-     *
-     * @var Integer
-     */
+    {
+        /**
+         * Used to contain Decode Id
+         *
+         * @var Integer
+         */
         $id = decodeToken();
         /**
          * Used to contain Layout Name
          *
          * @var String
          */
-        $layoutName = "allContact";
+        $layoutName = "Contact";
         /*
          *Condition for Id empty or not
          */
@@ -307,12 +326,18 @@ class ContactController
             return $response->withJSON(['error' => true, 'message' => 'Please provide an id.'],
                 API_PARAM_REQUIRED);
         } else {
-            /**
+            /*
              * Used to contain Request Body
              *
              * @var Object
              */
             $requestValue = json_decode($request->getBody());
+            if ($requestValue->recordId) {
+                unset($requestValue->recordId);
+            }
+            $originalDate = $requestValue->dob;
+            $newDate = date("m-d-Y", strtotime($originalDate));
+            $requestValue->dob = $newDate;
             /**
              * Used to contain FmModel Instance
              *
@@ -329,4 +354,89 @@ class ContactController
         }
 
     }
+    /**
+     * Update Contact Details
+     *
+     *
+     *
+     *
+     * @param object $request  represents the current HTTP request received
+     *                         by the web server
+     * @param object $response represents the current HTTP response to be
+     *                         returned to the client.
+     * @param array  $args     store the values send through url
+     *
+     * @return object           return response object with JSON format
+     */
+    public function getRecordOnRange($request, $response, $args)
+    {
+        /**
+         * Used to contain Decode Id
+         *
+         * @var Integer
+         */
+        $id = decodeToken();
+        if ($id) {
+        /**
+         * Used to contain LayoutName
+         *
+         * @var String
+         */
+            $layoutName = "allContact";
+            $fmquery = $this->fmdb->newFindCommand($layoutName);
+            $fmquery->addFindCriterion('email', '*');
+            $per_page = $_GET['range'];
+            $start = $_GET['start'];
+            $prev = $start - $per_page;
+
+            $next = $start + $per_page;
+            $fmquery->setRange($start, $per_page);
+
+            $result = $fmquery->execute();
+
+            //Return if record not present there
+            if ($this->fmdb::isError($result)) {
+                return ["message" => "Record Not Found"];;
+
+            }
+            /**
+             * Used to contain Record
+             *
+             * @var Object
+             */
+            $totalRecords = $result->getTableRecordCount();
+            $recs = $result->getRecords();
+            $count = 0;
+            // $total = $result->getTableRecordCount();
+            // $totalCount =["count"=>$total];
+            // $response1[0]=$totalCount;
+            foreach ($recs as $rec) {
+                $field = $rec->getFields();
+                $res['recordId'] = $rec->getRecordID();
+                foreach ($field as $field_name) {
+                    if ($field_name == 'dob') {
+                        $date = $rec->getField($field_name);
+                        $newDate = date("Y-m-d", strtotime($date));
+                        $res[$field_name] = $newDate;
+                    } else {
+                        $res[$field_name] = $rec->getField($field_name);
+                    }
+                }
+                $records[$count] = $res;
+
+                $count++;
+            }
+            $response=$response->withAddedHeader("access-control-expose-headers", "records");
+            $response=$response->withAddedHeader("records",$totalRecords);
+            // die();
+        } else {
+
+            $records = [['error' => true, 'message' => 'Unauthorized Access.'],
+                UNAUTHORIZED_USER];
+        }
+       // $response->withHeader('records', $totalRecords);
+        return $response->withJson($records);
+
+    }
+   
 }
