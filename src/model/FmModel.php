@@ -81,13 +81,19 @@ class FmModel
          *
          * @var Object
          */
+
         $rec = $fmdb->getRecordById($layoutName, $recordID);
+        // print_r($rec);
+        // exit();
         while (list($key, $val) = each($values)) {
             $rec->setField($key, $val);
+            // echo $key." ". $val;
             $result = $rec->commit();
         }
-
+        // print_r($values);
+        // exit();
         if ($fmdb::isError($result)) {
+            echo $result->getCode();
             return ["error" => "Some error occured"];
         } else {
             return ["data" => "Updated Successfully"];
@@ -155,7 +161,7 @@ class FmModel
         
         //Return if record not present there
         if ($fmdb::isError($result)) {
-            return ["message" => "Record NotFound"];;
+            return 'Not Found';
 
         }
         /**
@@ -174,6 +180,10 @@ class FmModel
                     $date =  $rec->getField($field_name);
                     $newDate = date("Y-m-d", strtotime($date));
                     $res[$field_name] = $newDate;
+                }else if($field_name == 'photo'){
+                    $photo =  $rec->getField($field_name);
+                    $photo = base64_decode($photo);
+                    $res[$field_name] = $photo;
                 }else{
                 $res[$field_name] = $rec->getField($field_name);
                 }

@@ -55,7 +55,7 @@ class ActivityController
     {
         $this->fmdb = $container->get('fmdb');
         $this->settings = $container->get('settings');
-        $this->layoutName = "activity";
+        $this->layoutName = "Activity";
     }
 
     /**
@@ -90,10 +90,13 @@ class ActivityController
          * Condition for filed is empty or not.
          *
          */
-        if (empty($activity->date) || empty($activity->activities) || empty($contactID)) {
+        if (empty($activity->ActivityDate) || empty($activity->activities) || empty($contactID)) {
             return $response->withJSON(['error' => true, 'message' => 'Enter the required field.'],
                 NOT_ACCEPTABLE);
         } else {
+             $originalDate = $activity->ActivityDate;
+            $newDate = date("m-d-Y", strtotime($originalDate));
+            $activity->ActivityDate = $newDate;
             /**
              * ActivityService instance
              *

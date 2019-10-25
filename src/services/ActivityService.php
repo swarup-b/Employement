@@ -47,8 +47,8 @@ class ActivityService
      * @var Array
      */
         $requestValue = array(
-            'contactID' => $contactID,
-            'date' => $activity->date,
+            'ContactID' => $contactID,
+            'ActivityDate' => $activity->ActivityDate,
             'activities' => $activity->activities,
         );
         /**

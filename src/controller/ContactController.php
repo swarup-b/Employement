@@ -78,7 +78,34 @@ class ContactController
              *
              * @var Object
              */
-            $contactDetails = json_decode($request->getBody());
+            $contactDetails = (object)$request->getParsedBody();
+             /**
+             * Used to contain Upload File object
+             *
+             * @var Object
+             */
+            $uploadedFiles = $request->getUploadedFiles();
+             /**
+             * Used to contain contactService object
+             *
+             * @var Object
+             */
+            $service = new ContactService();
+             /**
+             * Used to contain Path of the image
+             *
+             * @var String
+             */
+            $uploadResult = $service->uploadImage($uploadedFiles);
+             /**
+             * Used to set the profile picture paath
+             *
+             * @var Object
+             */
+            $contactDetails->profilePic = $uploadResult;
+            // if ($contactDetails->recordId) {
+                 unset($contactDetails->recordId);
+            // }
             $originalDate = $contactDetails->dob;
             $newDate = date("m-d-Y", strtotime($originalDate));
             $contactDetails->dob = $newDate;
@@ -314,7 +341,7 @@ class ContactController
          *
          * @var String
          */
-        $layoutName = "Contact";
+        $layoutName = "allContact";
         /*
          *Condition for Id empty or not
          */
@@ -331,10 +358,14 @@ class ContactController
              *
              * @var Object
              */
-            $requestValue = json_decode($request->getBody());
-            if ($requestValue->recordId) {
-                unset($requestValue->recordId);
-            }
+
+            // $value=file_get_contents('php://input');
+            // print_r($value);
+            // exit();
+            $requestValue = json_decode($request->getbody());
+           
+            unset($requestValue->recordId);
+            unset($requestValue->profilePic);
             $originalDate = $requestValue->dob;
             $newDate = date("m-d-Y", strtotime($originalDate));
             $requestValue->dob = $newDate;
@@ -345,7 +376,7 @@ class ContactController
              */
             $contact = new FmModel();
             /**
-             * Used to contain Return functionn
+             * Used to contain Return object
              *
              * @var Object
              */
@@ -385,11 +416,19 @@ class ContactController
             $layoutName = "allContact";
             $fmquery = $this->fmdb->newFindCommand($layoutName);
             $fmquery->addFindCriterion('email', '*');
+            $result = $fmquery->execute();
+             /**
+             * Used to contain Record
+             *
+             * @var Object
+             */
+            $totalRecords = $result->getTableRecordCount();
             $per_page = $_GET['range'];
             $start = $_GET['start'];
-            $prev = $start - $per_page;
+            $start =  $totalRecords-($start+$per_page);
+            // $prev = $start - $per_page;
 
-            $next = $start + $per_page;
+            // $next = $start + $per_page;
             $fmquery->setRange($start, $per_page);
 
             $result = $fmquery->execute();
@@ -399,12 +438,7 @@ class ContactController
                 return ["message" => "Record Not Found"];;
 
             }
-            /**
-             * Used to contain Record
-             *
-             * @var Object
-             */
-            $totalRecords = $result->getTableRecordCount();
+           
             $recs = $result->getRecords();
             $count = 0;
             // $total = $result->getTableRecordCount();
@@ -435,7 +469,7 @@ class ContactController
                 UNAUTHORIZED_USER];
         }
        // $response->withHeader('records', $totalRecords);
-        return $response->withJson($records);
+        return $response->withJson(array_reverse($records));
 
     }
    

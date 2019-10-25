@@ -14,6 +14,12 @@ namespace Src\Services;
 
 use Src\Model\FmModel;
 use \Firebase\JWT\JWT;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+// require 'path/to/PHPMailer/src/Exception.php';
+// require 'path/to/PHPMailer/src/PHPMailer.php';
+// require 'path/to/PHPMailer/src/SMTP.php';
 
 /**
  * User Service
@@ -100,7 +106,7 @@ class UserService
          *
          * @var Array
          */
-        $fieldsName = ["email" => $data->email, "password" => $data->password];
+        // $fieldsName = ["email" => $data->email, "password" => $data->password];
         /**
          * Used to contain result instance
          *
@@ -109,7 +115,8 @@ class UserService
         $result = $user->findFmRecord($layout_name, $requestValue, $fmdb);
         if (is_string($result)) {
             return ["error" => "Invalid email or password"];
-        }
+        }else{
+
         /**
          * Used to contain recordId
          *
@@ -123,5 +130,33 @@ class UserService
          */
         $token = JWT::encode(['id' => $recordId[0]], $settings['jwt']['secret'], "HS256");
         return array("token" => $token);
+    }
+    }
+    public function sendEmail($emailAdd){
+        $six_digit_random_number = mt_rand(100000, 999999);
+        $message = 'Your 6 digit OTP for changing the password is'. $six_digit_random_number;
+        $email = 'swarupbhol38@gmail.com';
+        $password = '7894015844';
+        $to_id = $emailAdd;
+        $subject = 'Reset Password';
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->Port = 587;
+        $mail->SMTPSecure = 'tls';
+        $mail->SMTPAuth = true;
+        $mail->Username = $email;
+        $mail->Password = $password;
+        $mail->SetFrom('swarupbhol38@gmail.com');
+        $mail->addAddress($to_id);
+        $mail->Subject = $subject;
+        $mail->msgHTML($message);
+        $mail->send();
+        if (!$mail->send()) {
+        return $mail->ErrorInfo;
+        }
+        else {
+        return ['message'=>'sent','otp'=> $six_digit_random_number];
+        }
     }
 }

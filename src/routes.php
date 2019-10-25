@@ -37,7 +37,12 @@ $app->group('/users',
 }
 );
 
- // $app->get("/report", 'ContactController:getRecordOnRange');
+  $app->get("/records/{layout}", 'FmUserController:getRecord');
+  $app->post("/upload", 'FmUserController:uploadImage');
+  $app->post("/resetPassword", 'FmUserController:resetPassword');
+  $app->post("/newPayment", 'FmUserController:newPayment');
+  $app->post("/testPayment", 'FmUserController:testPayment');
+  
 
 });
 
